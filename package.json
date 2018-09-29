@@ -1,0 +1,26 @@
+{
+  "name": "vstream",
+  "version": "0.0.1",
+  "description": "Edit strings via a vim-like command interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/floh1695/vstream.git"
+  },
+  "keywords": [
+    "string",
+    "text",
+    "vim",
+    "edit",
+    "command"
+  ],
+  "author": "Charles Bayley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/floh1695/vstream/issues"
+  },
+  "homepage": "https://github.com/floh1695/vstream#readme"
+}
