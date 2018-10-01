@@ -1,59 +1,104 @@
-enum Mode {
-  Normal,
-  Insert,
+interface IMode
+{
+  execute(message: string): void;
 }
 
-class Editor {
-  public mode: Mode = Mode.Normal;
+class NormalMode
+  implements IMode
+{
+  private _editor: IEditor;
 
-  public buffer: string;
-  public cursor: number = 0;
-
-  public constructor(buffer: string) {
-    this.buffer = buffer;
+  constructor(editor: IEditor)
+  {
+    this._editor = editor;
   }
 
-  public interpret(text: string): Editor {
-    const mode = this.mode;
-
-    if (mode === Mode.Normal) {
-      this.interpretNormal(text);
-    } else if (mode === Mode.Insert) {
-      this.interpretInsert(text);
+  public execute(message: string): void
+  {
+    if (message === 'i')
+    {
+      this._editor.setMode(new InsertMode(this._editor));
     }
-    
+  }
+}
+
+class InsertMode
+  implements IMode
+{
+  private _editor: IEditor;
+
+  constructor(editor: IEditor)
+  {
+    this._editor = editor;
+  }
+
+  public execute(message: string): void
+  {
+    if (message === '<esc>')
+    {
+      this._editor.setMode(new NormalMode(this._editor));
+    }
+    else
+    {
+      this._editor.write(message);
+    }
+  }
+}
+
+interface IEditor
+{
+  setMode(mode: IMode): IEditor;
+  write(message: string): IEditor;
+  execute(message: string): IEditor;
+}
+
+class Editor
+  implements IEditor
+{
+  private _mode: IMode;
+  private _buffer: string;
+
+  public constructor()
+  {
+    this._mode = new NormalMode(this);
+    this._buffer = '';
+  }
+
+  public setMode(mode: IMode): Editor
+  {
+    this._mode = mode;
     return this;
   }
 
-  private interpretNormal(text: string) {
-    text
-      .split('')
-      .forEach((char, index) => {
-        if (char === 'i') {
-          this.mode = Mode.Insert;
-
-          const leftover = text
-            .split('')
-            .slice(index + 1)
-            .join('');
-
-          this.interpretInsert(leftover);
-        }
-      });
+  public write(message: string): Editor
+  {
+    this._buffer = this._buffer.concat(message);
+    return this;
   }
 
-  private interpretInsert(text: string) {
-    console.log(text);
+  public execute(message: string): Editor
+  {
+    this._mode.execute(message);
+    return this;
+  }
+
+  public dump(): Editor
+  {
+    console.log(this._buffer);
+    return this;
   }
 }
 
-const main = (): void => {
+const main = (): void =>
+{
   console.log('Hello world!');
-  const editor = new Editor('');
 
-  editor
-    .interpret('iabc')
-    .interpret('abci123');
+  new Editor()
+    .execute('i')
+    .execute('hi there')
+    .execute('<esc>')
+    .execute('apple')
+    .dump();
 }
 
 main();
